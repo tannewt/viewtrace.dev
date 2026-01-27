@@ -15,7 +15,7 @@
 /**
  * These interactions may be added to a ZonedInteractionHandler. They define
  * some common operations that are used by several parts of the timeline such as
- * shift+drag to pan and mouse wheel navigation.
+ * drag to pan and mouse wheel navigation.
  */
 
 import {Rect2D} from '../../base/geom';
@@ -25,7 +25,7 @@ import {TraceImpl} from '../../core/trace_impl';
 
 const WHEEL_ZOOM_SPEED = -0.02;
 
-export function shiftDragPanInteraction(
+export function dragPanInteraction(
   trace: TraceImpl,
   rect: Rect2D,
   timescale: TimeScale,
@@ -34,7 +34,6 @@ export function shiftDragPanInteraction(
     id: 'drag-pan',
     area: rect,
     cursor: 'grab',
-    keyModifier: 'shift',
     drag: {
       cursorWhileDragging: 'grabbing',
       onDrag: (e) => {
@@ -57,13 +56,11 @@ export function wheelNavigationInteraction(
         const tDelta = timescale.pxToDuration(e.deltaX);
         trace.timeline.pan(tDelta);
       } else {
-        if (e.ctrlKey) {
-          const sign = e.deltaY < 0 ? -1 : 1;
-          const deltaY = sign * Math.log2(1 + Math.abs(e.deltaY));
-          const zoomPx = e.position.x - rect.left;
-          const centerPoint = zoomPx / rect.width;
-          trace.timeline.zoom(1 - deltaY * WHEEL_ZOOM_SPEED, centerPoint);
-        }
+        const sign = e.deltaY < 0 ? -1 : 1;
+        const deltaY = sign * Math.log2(1 + Math.abs(e.deltaY));
+        const zoomPx = e.position.x - rect.left;
+        const centerPoint = zoomPx / rect.width;
+        trace.timeline.zoom(1 - deltaY * WHEEL_ZOOM_SPEED, centerPoint);
       }
     },
   };

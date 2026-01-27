@@ -63,7 +63,7 @@ import {
 import {renderFlows} from './flow_events_renderer';
 import {generateTicks, getMaxMajorTicks, TickType} from './gridline_helper';
 import {
-  shiftDragPanInteraction,
+  dragPanInteraction,
   wheelNavigationInteraction,
 } from './timeline_interactions';
 import {TrackView} from './track_view';
@@ -516,7 +516,7 @@ export class TrackTreeView implements m.ClassComponent<TrackTreeViewAttrs> {
       trace.selection.selection.kind === 'area' && trace.selection.selection;
 
     assertExists(this.interactions).update([
-      shiftDragPanInteraction(trace, timelineRect, timescale),
+      dragPanInteraction(trace, timelineRect, timescale),
       areaSelection !== false && {
         id: 'start-edit',
         area: new Rect2D({
@@ -628,6 +628,7 @@ export class TrackTreeView implements m.ClassComponent<TrackTreeViewAttrs> {
       {
         id: 'area-selection',
         area: timelineRect,
+        keyModifier: 'shift',
         onClick: () => {
           // If a track hasn't intercepted the click, treat this as a
           // deselection event.

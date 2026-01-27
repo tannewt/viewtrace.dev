@@ -61,7 +61,7 @@ export class Hints implements m.ClassComponent {
               m(HotkeyGlyphs, {hotkey: 'D'}),
             ],
           ),
-          ' to navigate the trace.',
+          ' or click and drag to navigate the trace.',
         ),
         m(
           'li',

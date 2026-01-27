@@ -109,9 +109,9 @@ class KeyMappingsHelp implements m.ClassComponent {
       m(
         'table',
         m('tr', m('td', 'Click'), m('td', 'Select event')),
-        m('tr', m('td', 'Ctrl + Scroll wheel'), m('td', 'Zoom in/out')),
-        m('tr', m('td', 'Click + Drag'), m('td', 'Select area')),
-        m('tr', m('td', 'Shift + Click + Drag'), m('td', 'Pan left/right')),
+        m('tr', m('td', 'Scroll wheel'), m('td', 'Zoom in/out')),
+        m('tr', m('td', 'Click + Drag'), m('td', 'Pan left/right')),
+        m('tr', m('td', 'Shift + Click + Drag'), m('td', 'Select area')),
       ),
       m('h2', 'Running commands from the viewer page'),
       m(

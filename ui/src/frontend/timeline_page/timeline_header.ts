@@ -31,7 +31,7 @@ import {TickmarkPanel} from './tickmark_panel';
 import {TimeAxisPanel} from './time_axis_panel';
 import {TimeSelectionPanel} from './time_selection_panel';
 import {
-  shiftDragPanInteraction,
+  dragPanInteraction,
   wheelNavigationInteraction,
 } from './timeline_interactions';
 
@@ -142,13 +142,14 @@ export class TimelineHeader implements m.ClassComponent<TimelineHeaderAttrs> {
     const timescale = new TimeScale(visibleWindow, timelineRect);
 
     assertExists(this.interactions).update([
-      shiftDragPanInteraction(this.trace, timelineRect, timescale),
+      dragPanInteraction(this.trace, timelineRect, timescale),
       wheelNavigationInteraction(this.trace, timelineRect, timescale),
       {
         // Allow making area selections (no tracks) by dragging on the header
         // timeline.
         id: 'area-selection',
         area: timelineRect,
+        keyModifier: 'shift',
         drag: {
           minDistance: 1,
           cursorWhileDragging: 'text',
