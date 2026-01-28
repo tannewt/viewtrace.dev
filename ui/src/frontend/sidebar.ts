@@ -43,7 +43,6 @@ import {SidebarMenuItemInternal} from '../core/sidebar_manager';
 import {exists, getOrCreate} from '../base/utils';
 import {classNames} from '../base/classnames';
 import {formatHotkey} from '../base/hotkeys';
-import {assetSrc} from '../base/assets';
 import {assertExists} from '../base/logging';
 import {Icon} from '../widgets/icon';
 import {Button} from '../widgets/button';
@@ -385,7 +384,7 @@ export class Sidebar implements m.ClassComponent {
       shouldShowHiringBanner() ? m(HiringBanner) : null,
       m(
         `header.pf-sidebar__channel--${getCurrentChannel()}`,
-        m(`img[src=${assetSrc('assets/brand.png')}].pf-sidebar__brand`),
+        m('viewtrace.dev'),
         m(Button, {
           icon: 'menu',
           className: 'pf-sidebar-button',

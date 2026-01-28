@@ -13,10 +13,8 @@
 // limitations under the License.
 
 import m from 'mithril';
-import {channelChanged, getNextChannel, setChannel} from '../core/channels';
 import {Anchor} from '../widgets/anchor';
 import {HotkeyGlyphs} from '../widgets/hotkey_glyphs';
-import {assetSrc} from '../base/assets';
 import {Stack} from '../widgets/stack';
 import {Switch} from '../widgets/switch';
 import {AppImpl} from '../core/app_impl';
@@ -28,9 +26,20 @@ export class Hints implements m.ClassComponent {
 
     return m(
       '.pf-home-page__hints',
-      m('.pf-home-page__tagline', 'New!'),
       m(
         'ul',
+        m(
+          'li',
+          'This is a fork of ',
+          m(
+            Anchor,
+            {
+              href: 'https://ui.perfetto.dev',
+            },
+            'Perfetto',
+          ),
+          '.',
+        ),
         m('li', [
           m(Switch, {
             label: ['Try the new dark mode.', isDarkMode && ' \u{1F60E}'],
@@ -50,7 +59,7 @@ export class Hints implements m.ClassComponent {
         ),
         m(
           'li',
-          'Use ',
+          'Click or drag to navigate the trace ( ',
           m(
             Stack,
             {inline: true, spacing: 'small', orientation: 'horizontal'},
@@ -61,7 +70,7 @@ export class Hints implements m.ClassComponent {
               m(HotkeyGlyphs, {hotkey: 'D'}),
             ],
           ),
-          ' or click and drag to navigate the trace.',
+          ' still works too).',
         ),
         m(
           'li',
@@ -88,44 +97,9 @@ export class HomePage implements m.ClassComponent {
       '.pf-home-page',
       m(
         '.pf-home-page__center',
-        m(
-          '.pf-home-page__title',
-          m(`img.logo[src=${assetSrc('assets/logo-3d.png')}]`),
-          'Perfetto',
-        ),
+        m('.pf-home-page__title', 'viewtrace.dev'),
         m(Hints),
-        m(
-          '.pf-home-page__channel-select',
-          m('', 'Feeling adventurous? Try our bleeding edge Canary version'),
-          m(
-            'fieldset',
-            mkChan('stable'),
-            mkChan('canary'),
-            m('.pf-home-page__highlight'),
-          ),
-          m(
-            `.pf-home-page__reload${channelChanged() ? '.show' : ''}`,
-            'You need to reload the page for the changes to have effect',
-          ),
-        ),
-      ),
-      m(
-        'a.pf-privacy',
-        {href: 'https://policies.google.com/privacy', target: '_blank'},
-        'Privacy policy',
       ),
     );
   }
-}
-
-function mkChan(chan: string) {
-  const checked = getNextChannel() === chan ? '[checked=true]' : '';
-  return [
-    m(`input[type=radio][name=chan][id=chan_${chan}]${checked}`, {
-      onchange: () => {
-        setChannel(chan);
-      },
-    }),
-    m(`label[for=chan_${chan}]`, chan),
-  ];
 }
