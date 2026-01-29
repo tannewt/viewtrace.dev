@@ -34,6 +34,8 @@ enum TraceType {
   kNinjaLogTraceType,
   kPerfDataTraceType,
   kPprofTraceType,
+  kSaleaeBinaryTraceType,
+  kSaleaeCsvTraceType,
   kProtoTraceType,
   kSymbolsTraceType,
   kSystraceTraceType,

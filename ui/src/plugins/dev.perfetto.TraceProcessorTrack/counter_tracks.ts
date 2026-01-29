@@ -201,6 +201,16 @@ export const COUNTER_TRACK_SCHEMAS: ReadonlyArray<CounterTrackTypeSchema> = [
     group: undefined,
   },
   {
+    type: 'saleae_digital',
+    topLevelGroup: 'HARDWARE',
+    group: 'Saleae',
+  },
+  {
+    type: 'saleae_analog',
+    topLevelGroup: 'HARDWARE',
+    group: 'Saleae',
+  },
+  {
     type: 'gpu_counter',
     topLevelGroup: 'GPU',
     group: 'GPU Counters',

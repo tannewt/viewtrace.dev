@@ -45,6 +45,8 @@ bool RequiresZlibSupport(TraceType type) {
     case kSystraceTraceType:
     case kPerfDataTraceType:
     case kPprofTraceType:
+    case kSaleaeBinaryTraceType:
+    case kSaleaeCsvTraceType:
     case kInstrumentsXmlTraceType:
     case kUnknownTraceType:
     case kJsonTraceType:

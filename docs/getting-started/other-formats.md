@@ -1018,12 +1018,13 @@ format is for:
   profiling data as an interactive flamegraph. If the `pprof` file contains
   multiple metrics (e.g., CPU time and memory allocations), the UI allows you
   to switch between them, displaying a separate flamegraph for each metric.
-  This enables intuitive analysis of call stacks and helps identify performance
-  hotspots across different dimensions.
 
-  Here's an example of what that looks like
+This enables intuitive analysis of call stacks and helps identify performance
+hotspots across different dimensions.
 
-  ![](/docs/images/pprof-in-ui.png)
+Here's an example of what that looks like
+
+![](/docs/images/pprof-in-ui.png)
 
 **How to Generate:** The most relevant generation path for Perfetto users
 involves collecting CPU profiles from Go programs or converting `perf.data` files.
@@ -1062,6 +1063,51 @@ involves collecting CPU profiles from Go programs or converting `perf.data` file
   [perf Wiki](https://perf.wiki.kernel.org/index.php/Main_Page)
 - **`perf_data_converter` GitHub Repository:**
   [https://github.com/google/perf_data_converter](https://github.com/google/perf_data_converter)
+
+## Saleae binary export format
+
+**Description:** Saleae's binary export format is a compact binary
+representation of logic analyzer captures. It can contain either digital
+transition data or analog sample data per exported channel.
+
+**Perfetto Support:**
+
+- **Trace Processor:** Perfetto can ingest the Saleae binary export format.
+  - Digital exports are imported as a single counter track with 0/1 values
+    emitted at the initial state and each transition time.
+  - Analog exports are imported as a single counter track with sample values
+    emitted at each sample timestamp.
+  - Tracks are global counter tracks named "Saleae Digital" or
+    "Saleae Analog" with unknown units.
+
+**Notes:**
+
+- The `.sal` capture container is a ZIP bundle of internal `.bin` files and
+  metadata. Perfetto expects the exported Saleae binary format, not the raw
+  `.sal` container.
+
+## Saleae CSV export format
+
+**Description:** Saleae's analyzer CSV export format is a row-oriented,
+comma-separated export of protocol/analyzer results. **Perfetto's importer
+specifically targets the exported I2C decoder output** (fields like `address`,
+`data`, `ack`, `read`, `error`). Each row contains an analyzer name, event type,
+start time, duration, and analyzer-specific columns such as data bytes, ACK/NAK,
+addresses, or error flags.
+
+**Perfetto Support:**
+
+- **Trace Processor:** Perfetto can ingest the Saleae CSV export format.
+  - Each analyzer name is imported as a slice track named
+    "Saleae CSV: <analyzer>".
+  - Each CSV row is imported as a slice with the given start time and duration.
+  - All remaining columns (e.g. `data`, `ack`, `address`, `read`, `error`) are
+    added as slice arguments.
+
+**Notes:**
+
+- Perfetto expects the CSV export, not the `.sal` capture container.
+- Timestamps are interpreted as seconds and converted to trace nanoseconds.
 
 ## Collapsed Stack format
 

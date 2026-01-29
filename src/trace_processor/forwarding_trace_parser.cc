@@ -69,6 +69,8 @@ std::optional<TraceSorter::SortingMode> GetMinimumSortingMode(
     case kPerfDataTraceType:
     case kPerfTextTraceType:
     case kPprofTraceType:
+    case kSaleaeBinaryTraceType:
+    case kSaleaeCsvTraceType:
     case kSimpleperfProtoTraceType:
     case kSystraceTraceType:
     case kTarTraceType:

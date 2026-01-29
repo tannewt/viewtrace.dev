@@ -74,6 +74,8 @@
 #include "src/trace_processor/importers/proto/additional_modules.h"
 #include "src/trace_processor/importers/proto/deobfuscation_tracker.h"
 #include "src/trace_processor/importers/proto/heap_graph_tracker.h"
+#include "src/trace_processor/importers/saleae/saleae_binary_trace_reader.h"
+#include "src/trace_processor/importers/saleae/saleae_csv_trace_reader.h"
 #include "src/trace_processor/importers/simpleperf_proto/simpleperf_proto_tokenizer.h"
 #include "src/trace_processor/importers/systrace/systrace_trace_parser.h"
 #include "src/trace_processor/iterator_impl.h"
@@ -498,6 +500,10 @@ TraceProcessorImpl::TraceProcessorImpl(const Config& cfg)
       kNinjaLogTraceType);
   context()->reader_registry->RegisterTraceReader<PprofTraceReader>(
       kPprofTraceType);
+  context()->reader_registry->RegisterTraceReader<SaleaeBinaryTraceReader>(
+      kSaleaeBinaryTraceType);
+  context()->reader_registry->RegisterTraceReader<SaleaeCsvTraceReader>(
+      kSaleaeCsvTraceType);
   context()->reader_registry->RegisterTraceReader<CollapsedStackTraceReader>(
       kCollapsedStackTraceType);
   context()

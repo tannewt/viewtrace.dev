@@ -114,6 +114,21 @@ You might want to contribute to the UI, Trace Processor, SDK or various data imp
 - If you want to add a new ftrace event take a look at [common tasks page](common-tasks).
 - If you want to add a new table/view/function to Perfetto SQL standard library you need to first undestand [the Perfetto SQL syntax](/docs/analysis/perfetto-sql-syntax.md), and then read the details of updating the standard library at [common tasks page](common-tasks).
 - If you want to add a support of a new file type into Perfetto, you need to add a new `importer` to Trace Processor C++ code.
+  - **Typical steps for a new trace format:**
+    - Implement a `ChunkedTraceReader` in `src/trace_processor/importers/<format>/`.
+    - Add a new `TraceType` enum entry and detection logic in
+      `src/trace_processor/util/trace_type.{h,cc}`.
+    - Register the reader in `src/trace_processor/trace_processor_impl.cc`.
+    - Update `src/trace_processor/forwarding_trace_parser.cc` and
+      `src/trace_processor/trace_reader_registry.cc` for sorting/zlib handling.
+    - Add BUILD.gn targets for the new importer and hook it into
+      `src/trace_processor/BUILD.gn`.
+    - If you emit counters/slices that should appear in the UI, add the type to
+      the relevant UI schemas (e.g. counter track types in
+      `ui/src/plugins/dev.perfetto.TraceProcessorTrack/counter_tracks.ts`).
+    - Add unit tests (e.g. importer-specific tests + GuessTraceType tests), and
+      update docs like `docs/getting-started/other-formats.md`.
+    - Build `trace_processor_shell` and run the targeted tests.
 
 ## {#community} Communication
 

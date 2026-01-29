@@ -19,10 +19,13 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <string>
+#include <vector>
 
 #include "perfetto/base/logging.h"
 #include "perfetto/ext/base/string_utils.h"
+#include "perfetto/ext/base/string_view.h"
 #include "perfetto/protozero/proto_decoder.h"
 #include "perfetto/protozero/proto_utils.h"
 #include "src/trace_processor/importers/android_bugreport/android_log_event.h"
@@ -49,6 +52,12 @@ constexpr char kTarGnuMagic[] = {'u', 's', 't', 'a', 'r', ' ', ' ', '\0'};
 constexpr size_t kTarMagicOffset = 257;
 constexpr char kSimpleperfMagic[] = {'S', 'I', 'M', 'P', 'L',
                                      'E', 'P', 'E', 'R', 'F'};
+constexpr char kSaleaeMagic[] = {'<', 'S', 'A', 'L', 'E', 'A', 'E', '>'};
+constexpr uint32_t kSaleaeV0FileId = 0x00002f00;
+constexpr int32_t kSaleaeVersion0 = 0;
+constexpr int32_t kSaleaeVersion1 = 1;
+constexpr int32_t kSaleaeDigitalType = 0;
+constexpr int32_t kSaleaeAnalogType = 1;
 
 constexpr uint8_t kTracePacketTag =
     protozero::proto_utils::MakeTagLengthDelimited(
@@ -62,6 +71,74 @@ std::string RemoveWhitespace(std::string str) {
   return str;
 }
 
+std::vector<std::string> ParseCsvLine(base::StringView line) {
+  std::vector<std::string> fields;
+  std::string field;
+  bool in_quotes = false;
+  for (size_t i = 0; i < line.size(); ++i) {
+    char c = line.at(i);
+    if (in_quotes) {
+      if (c == '"') {
+        if (i + 1 < line.size() && line.at(i + 1) == '"') {
+          field.push_back('"');
+          ++i;
+        } else {
+          in_quotes = false;
+        }
+      } else {
+        field.push_back(c);
+      }
+    } else if (c == '"') {
+      in_quotes = true;
+    } else if (c == ',') {
+      fields.push_back(field);
+      field.clear();
+    } else {
+      field.push_back(c);
+    }
+  }
+  fields.push_back(field);
+  return fields;
+}
+
+std::string StripUtf8Bom(std::string value) {
+  if (value.size() >= 3 &&
+      static_cast<uint8_t>(value[0]) == 0xEF &&
+      static_cast<uint8_t>(value[1]) == 0xBB &&
+      static_cast<uint8_t>(value[2]) == 0xBF) {
+    value.erase(0, 3);
+  }
+  return value;
+}
+
+bool LooksLikeSaleaeCsvHeader(const std::string& header) {
+  std::vector<std::string> fields = ParseCsvLine(base::StringView(header));
+  if (fields.empty()) {
+    return false;
+  }
+  bool has_name = false;
+  bool has_type = false;
+  bool has_start_time = false;
+  bool has_duration = false;
+  for (size_t i = 0; i < fields.size(); ++i) {
+    std::string field = base::TrimWhitespace(fields[i]);
+    if (i == 0) {
+      field = StripUtf8Bom(std::move(field));
+    }
+    std::string lower = base::ToLower(field);
+    if (lower == "name") {
+      has_name = true;
+    } else if (lower == "type") {
+      has_type = true;
+    } else if (lower == "start_time" || lower == "start time") {
+      has_start_time = true;
+    } else if (lower == "duration") {
+      has_duration = true;
+    }
+  }
+  return has_name && has_type && has_start_time && has_duration;
+}
+
 template <size_t N>
 bool MatchesMagic(const uint8_t* data,
                   size_t size,
@@ -72,6 +149,13 @@ bool MatchesMagic(const uint8_t* data,
   }
 
   return memcmp(data + offset, magic, N) == 0;
+}
+
+template <typename T>
+T ReadLittleEndian(const uint8_t* data) {
+  T value;
+  memcpy(&value, data, sizeof(T));
+  return value;
 }
 
 bool IsProtoTraceWithSymbols(const uint8_t* ptr, size_t size) {
@@ -272,6 +356,10 @@ const char* TraceTypeToString(TraceType trace_type) {
       return "perf";
     case kPprofTraceType:
       return "pprof";
+    case kSaleaeBinaryTraceType:
+      return "saleae_binary";
+    case kSaleaeCsvTraceType:
+      return "saleae_csv";
     case kCollapsedStackTraceType:
       return "collapsed_stack";
     case kInstrumentsXmlTraceType:
@@ -340,8 +428,35 @@ TraceType GuessTraceType(const uint8_t* data, size_t size) {
     return kArtHprofTraceType;
   }
 
+  if (MatchesMagic(data, size, kSaleaeMagic)) {
+    if (size >= 16) {
+      int32_t version = ReadLittleEndian<int32_t>(data + 8);
+      int32_t type = ReadLittleEndian<int32_t>(data + 12);
+      if ((version == kSaleaeVersion0 || version == kSaleaeVersion1) &&
+          (type == kSaleaeDigitalType || type == kSaleaeAnalogType)) {
+        return kSaleaeBinaryTraceType;
+      }
+    }
+  } else if (size >= 12) {
+    uint32_t file_id = ReadLittleEndian<uint32_t>(data);
+    if (file_id == kSaleaeV0FileId) {
+      int32_t version = ReadLittleEndian<int32_t>(data + 4);
+      int32_t type = ReadLittleEndian<int32_t>(data + 8);
+      if (version == kSaleaeVersion0 &&
+          (type == kSaleaeDigitalType || type == kSaleaeAnalogType)) {
+        return kSaleaeBinaryTraceType;
+      }
+    }
+  }
+
   std::string start(reinterpret_cast<const char*>(data),
                     std::min<size_t>(size, kGuessTraceMaxLookahead));
+  size_t line_end = start.find_first_of("\r\n");
+  std::string first_line =
+      start.substr(0, line_end == std::string::npos ? start.size() : line_end);
+  if (LooksLikeSaleaeCsvHeader(first_line)) {
+    return kSaleaeCsvTraceType;
+  }
 
   std::string start_minus_white_space = RemoveWhitespace(start);
   // Generated by the Gecko conversion script built into perf.

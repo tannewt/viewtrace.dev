@@ -119,6 +119,11 @@ export const SLICE_TRACK_SCHEMAS: ReadonlyArray<SliceTrackTypeSchema> = [
     group: undefined,
   },
   {
+    type: 'saleae_csv',
+    topLevelGroup: 'HARDWARE',
+    group: 'Saleae',
+  },
+  {
     type: 'drm_vblank',
     topLevelGroup: 'HARDWARE',
     group: 'DRM VBlank',

@@ -40,6 +40,15 @@ export class Hints implements m.ClassComponent {
           ),
           '.',
         ),
+        m(
+          'li',
+          'New file formats:',
+          m(
+            'ul',
+            m('li', 'Saleae binary export.'),
+            m('li', 'Saleae CSV export (I2C decoder output).'),
+          ),
+        ),
         m('li', [
           m(Switch, {
             label: ['Try the new dark mode.', isDarkMode && ' \u{1F60E}'],

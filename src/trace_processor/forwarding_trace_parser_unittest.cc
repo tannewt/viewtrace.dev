@@ -96,6 +96,31 @@ TEST(TraceProcessorImplTest, GuessTraceType_Bmp) {
   EXPECT_EQ(kUnknownTraceType, GuessTraceType(prefix, sizeof(prefix)));
 }
 
+TEST(TraceProcessorImplTest, GuessTraceType_SaleaeV1) {
+  const uint8_t prefix[] = {
+      '<', 'S', 'A', 'L', 'E', 'A', 'E', '>',
+      0x01, 0x00, 0x00, 0x00,  // version
+      0x00, 0x00, 0x00, 0x00,  // data_type (digital)
+  };
+  EXPECT_EQ(kSaleaeBinaryTraceType, GuessTraceType(prefix, sizeof(prefix)));
+}
+
+TEST(TraceProcessorImplTest, GuessTraceType_SaleaeV0) {
+  const uint8_t prefix[] = {
+      0x00, 0x2f, 0x00, 0x00,  // file_id
+      0x00, 0x00, 0x00, 0x00,  // version
+      0x00, 0x00, 0x00, 0x00,  // data_type (digital)
+  };
+  EXPECT_EQ(kSaleaeBinaryTraceType, GuessTraceType(prefix, sizeof(prefix)));
+}
+
+TEST(TraceProcessorImplTest, GuessTraceType_SaleaeCsv) {
+  const uint8_t prefix[] =
+      "name,type,start_time,duration,data,ack,address,read\n"
+      "\"I2C\",\"start\",0,0.000000002,,,,\n";
+  EXPECT_EQ(kSaleaeCsvTraceType, GuessTraceType(prefix, sizeof(prefix)));
+}
+
 }  // namespace
 }  // namespace trace_processor
 }  // namespace perfetto
