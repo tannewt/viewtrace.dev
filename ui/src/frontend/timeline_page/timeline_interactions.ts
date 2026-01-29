@@ -29,6 +29,7 @@ export function dragPanInteraction(
   trace: TraceImpl,
   rect: Rect2D,
   timescale: TimeScale,
+  scrollContainer?: HTMLElement,
 ): Zone {
   return {
     id: 'drag-pan',
@@ -36,8 +37,14 @@ export function dragPanInteraction(
     cursor: 'grab',
     drag: {
       cursorWhileDragging: 'grabbing',
-      onDrag: (e) => {
+      onDrag: (e, element) => {
         trace.timeline.pan(timescale.pxToDuration(-e.deltaSinceLastEvent.x));
+        // Scroll the container vertically
+        const container =
+          scrollContainer ?? element.parentElement?.parentElement;
+        if (container) {
+          container.scrollTop -= e.deltaSinceLastEvent.y;
+        }
       },
     },
   };
