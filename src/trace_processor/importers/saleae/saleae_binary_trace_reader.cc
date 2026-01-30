@@ -40,22 +40,20 @@ constexpr int32_t kSaleaeVersion1 = 1;
 constexpr int32_t kSaleaeDigitalType = 0;
 constexpr int32_t kSaleaeAnalogType = 1;
 
-constexpr auto kSaleaeDigitalBlueprint = tracks::CounterBlueprint(
-    "saleae_digital",
-    tracks::UnknownUnitBlueprint(),
-    tracks::DimensionBlueprints(),
-    tracks::StaticNameBlueprint("Saleae Digital"));
+constexpr auto kSaleaeDigitalBlueprint =
+    tracks::CounterBlueprint("saleae_digital",
+                             tracks::UnknownUnitBlueprint(),
+                             tracks::DimensionBlueprints(),
+                             tracks::StaticNameBlueprint("Saleae Digital"));
 
-constexpr auto kSaleaeAnalogBlueprint = tracks::CounterBlueprint(
-    "saleae_analog",
-    tracks::UnknownUnitBlueprint(),
-    tracks::DimensionBlueprints(),
-    tracks::StaticNameBlueprint("Saleae Analog"));
+constexpr auto kSaleaeAnalogBlueprint =
+    tracks::CounterBlueprint("saleae_analog",
+                             tracks::UnknownUnitBlueprint(),
+                             tracks::DimensionBlueprints(),
+                             tracks::StaticNameBlueprint("Saleae Analog"));
 
 template <typename T>
-bool ReadField(const std::vector<uint8_t>& buffer,
-               size_t* pos,
-               T* out) {
+bool ReadField(const std::vector<uint8_t>& buffer, size_t* pos, T* out) {
   if (*pos + sizeof(T) > buffer.size()) {
     return false;
   }
@@ -92,8 +90,7 @@ base::Status SaleaeBinaryTraceReader::NotifyEndOfFile() {
 
 SaleaeBinaryTraceReader::DataType SaleaeBinaryTraceReader::ParseDataType(
     int32_t raw_type) const {
-  return raw_type == kSaleaeAnalogType ? DataType::kAnalog
-                                        : DataType::kDigital;
+  return raw_type == kSaleaeAnalogType ? DataType::kAnalog : DataType::kDigital;
 }
 
 int64_t SaleaeBinaryTraceReader::SecondsToNs(double seconds) const {
@@ -287,9 +284,8 @@ base::Status SaleaeBinaryTraceReader::ParseAnalogWaveformV1(size_t* pos) {
       float sample = 0.0f;
       memcpy(&sample, buffer_.data() + *pos, sizeof(float));
       *pos += sizeof(float);
-      context_->event_tracker->PushCounter(SecondsToNs(current_time),
-                                           static_cast<double>(sample),
-                                           track_id);
+      context_->event_tracker->PushCounter(
+          SecondsToNs(current_time), static_cast<double>(sample), track_id);
       current_time += step;
     }
   }

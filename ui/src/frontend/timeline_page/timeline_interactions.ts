@@ -50,7 +50,10 @@ export function dragPanInteraction(
   };
 }
 
-export function wheelNavigationInteraction(trace: TraceImpl, rect: Rect2D): Zone {
+export function wheelNavigationInteraction(
+  trace: TraceImpl,
+  rect: Rect2D,
+): Zone {
   return {
     id: 'mouse-wheel-navigation',
     area: rect,

@@ -39,7 +39,7 @@ class SaleaeCsvTraceReader : public ChunkedTraceReader {
   ~SaleaeCsvTraceReader() override;
 
   base::Status Parse(TraceBlobView blob) override;
- base::Status NotifyEndOfFile() override;
+  base::Status NotifyEndOfFile() override;
 
  private:
   struct TransactionState {
@@ -71,9 +71,9 @@ class SaleaeCsvTraceReader : public ChunkedTraceReader {
   std::optional<size_t> read_col_;
   base::FlatHashMap<std::string, TrackId, base::MurmurHash<std::string>>
       track_ids_;
-  base::FlatHashMap<std::string, TransactionState,
-                    base::MurmurHash<std::string>>
-      transaction_state_;
+  base::
+      FlatHashMap<std::string, TransactionState, base::MurmurHash<std::string>>
+          transaction_state_;
 };
 
 }  // namespace perfetto::trace_processor

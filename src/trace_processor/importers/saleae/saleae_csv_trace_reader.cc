@@ -89,8 +89,7 @@ std::vector<std::string> ParseCsvLine(base::StringView line) {
 }
 
 std::string StripUtf8Bom(std::string value) {
-  if (value.size() >= 3 &&
-      static_cast<uint8_t>(value[0]) == 0xEF &&
+  if (value.size() >= 3 && static_cast<uint8_t>(value[0]) == 0xEF &&
       static_cast<uint8_t>(value[1]) == 0xBB &&
       static_cast<uint8_t>(value[2]) == 0xBF) {
     value.erase(0, 3);
@@ -198,8 +197,7 @@ base::Status SaleaeCsvTraceReader::ParseRow(const std::string& line) {
     fields.resize(columns_.size());
   }
 
-  std::string analyzer =
-      base::TrimWhitespace(fields[name_col_.value_or(0)]);
+  std::string analyzer = base::TrimWhitespace(fields[name_col_.value_or(0)]);
   if (analyzer.empty()) {
     analyzer = "Unknown";
   }
@@ -221,8 +219,7 @@ base::Status SaleaeCsvTraceReader::ParseRow(const std::string& line) {
                            start_str.c_str());
   }
 
-  std::string dur_str =
-      base::TrimWhitespace(fields[duration_col_.value_or(0)]);
+  std::string dur_str = base::TrimWhitespace(fields[duration_col_.value_or(0)]);
   double duration_seconds = 0.0;
   if (!dur_str.empty()) {
     auto dur_value = base::StringToDouble(dur_str);
@@ -270,8 +267,7 @@ base::Status SaleaeCsvTraceReader::ParseRow(const std::string& line) {
       context_->storage->InternString(base::StringView(event_name));
   StringId category_id = kNullStringId;
   if (type_lower == "data" || type_lower == "address") {
-    category_id =
-        context_->storage->InternString(base::StringView(type_lower));
+    category_id = context_->storage->InternString(base::StringView(type_lower));
   }
 
   struct ParsedArg {
@@ -294,8 +290,7 @@ base::Status SaleaeCsvTraceReader::ParseRow(const std::string& line) {
     }
     std::string lower = base::ToLower(value);
     if (lower == "true" || lower == "false") {
-      args.push_back({column_key_ids_[i],
-                      Variadic::Boolean(lower == "true")});
+      args.push_back({column_key_ids_[i], Variadic::Boolean(lower == "true")});
     } else {
       StringId value_id =
           context_->storage->InternString(base::StringView(value));
@@ -377,8 +372,8 @@ base::Status SaleaeCsvTraceReader::ParseRow(const std::string& line) {
         StringId write_value_id = kNullStringId;
         StringId read_value_id = kNullStringId;
         if (!state->address.empty()) {
-          address_value_id = context_->storage->InternString(
-              base::StringView(state->address));
+          address_value_id =
+              context_->storage->InternString(base::StringView(state->address));
         }
         if (!state->write_bytes.empty()) {
           std::string joined = JoinBytes(state->write_bytes);
@@ -399,8 +394,8 @@ base::Status SaleaeCsvTraceReader::ParseRow(const std::string& line) {
             state->start_ts_ns, track_id, transaction_category_id,
             transaction_name_id, transaction_dur_ns,
             [address_key_id, write_key_id, read_key_id, address_value_id,
-             write_value_id, read_value_id](
-                ArgsTracker::BoundInserter* inserter) {
+             write_value_id,
+             read_value_id](ArgsTracker::BoundInserter* inserter) {
               if (!inserter) {
                 return;
               }
@@ -413,8 +408,7 @@ base::Status SaleaeCsvTraceReader::ParseRow(const std::string& line) {
                                  Variadic::String(write_value_id));
               }
               if (!read_value_id.is_null()) {
-                inserter->AddArg(read_key_id,
-                                 Variadic::String(read_value_id));
+                inserter->AddArg(read_key_id, Variadic::String(read_value_id));
               }
             });
         state->open = false;

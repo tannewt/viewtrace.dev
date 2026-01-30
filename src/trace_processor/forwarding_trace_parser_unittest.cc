@@ -98,9 +98,9 @@ TEST(TraceProcessorImplTest, GuessTraceType_Bmp) {
 
 TEST(TraceProcessorImplTest, GuessTraceType_SaleaeV1) {
   const uint8_t prefix[] = {
-      '<', 'S', 'A', 'L', 'E', 'A', 'E', '>',
-      0x01, 0x00, 0x00, 0x00,  // version
-      0x00, 0x00, 0x00, 0x00,  // data_type (digital)
+      '<',  'S',  'A',  'L',  'E',  'A',
+      'E',  '>',  0x01, 0x00, 0x00, 0x00,  // version
+      0x00, 0x00, 0x00, 0x00,              // data_type (digital)
   };
   EXPECT_EQ(kSaleaeBinaryTraceType, GuessTraceType(prefix, sizeof(prefix)));
 }

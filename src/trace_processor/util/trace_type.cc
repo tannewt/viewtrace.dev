@@ -102,8 +102,7 @@ std::vector<std::string> ParseCsvLine(base::StringView line) {
 }
 
 std::string StripUtf8Bom(std::string value) {
-  if (value.size() >= 3 &&
-      static_cast<uint8_t>(value[0]) == 0xEF &&
+  if (value.size() >= 3 && static_cast<uint8_t>(value[0]) == 0xEF &&
       static_cast<uint8_t>(value[1]) == 0xBB &&
       static_cast<uint8_t>(value[2]) == 0xBF) {
     value.erase(0, 3);
