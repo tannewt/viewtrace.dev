@@ -386,6 +386,7 @@ perfetto_cc_library(
         ":src_trace_processor_importers_proto_packet_sequence_state_generation_hdr",
         ":src_trace_processor_importers_proto_proto_importer_module",
         ":src_trace_processor_importers_proto_winscope_full",
+        ":src_trace_processor_importers_saleae_saleae",
         ":src_trace_processor_importers_simpleperf_proto_simpleperf_proto",
         ":src_trace_processor_importers_syscalls_full",
         ":src_trace_processor_importers_systrace_full",
@@ -594,6 +595,7 @@ perfetto_cc_library(
         ":src_trace_processor_importers_proto_packet_sequence_state_generation_hdr",
         ":src_trace_processor_importers_proto_proto_importer_module",
         ":src_trace_processor_importers_proto_winscope_full",
+        ":src_trace_processor_importers_saleae_saleae",
         ":src_trace_processor_importers_simpleperf_proto_simpleperf_proto",
         ":src_trace_processor_importers_syscalls_full",
         ":src_trace_processor_importers_systrace_full",
@@ -2805,6 +2807,17 @@ perfetto_filegroup(
     srcs = [
         "src/trace_processor/importers/proto/proto_importer_module.cc",
         "src/trace_processor/importers/proto/proto_importer_module.h",
+    ],
+)
+
+# GN target: //src/trace_processor/importers/saleae:saleae
+perfetto_filegroup(
+    name = "src_trace_processor_importers_saleae_saleae",
+    srcs = [
+        "src/trace_processor/importers/saleae/saleae_binary_trace_reader.cc",
+        "src/trace_processor/importers/saleae/saleae_binary_trace_reader.h",
+        "src/trace_processor/importers/saleae/saleae_csv_trace_reader.cc",
+        "src/trace_processor/importers/saleae/saleae_csv_trace_reader.h",
     ],
 )
 
@@ -8152,6 +8165,7 @@ perfetto_cc_library(
         ":src_trace_processor_importers_proto_packet_sequence_state_generation_hdr",
         ":src_trace_processor_importers_proto_proto_importer_module",
         ":src_trace_processor_importers_proto_winscope_full",
+        ":src_trace_processor_importers_saleae_saleae",
         ":src_trace_processor_importers_simpleperf_proto_simpleperf_proto",
         ":src_trace_processor_importers_syscalls_full",
         ":src_trace_processor_importers_systrace_full",
@@ -8389,6 +8403,7 @@ perfetto_cc_binary(
         ":src_trace_processor_importers_proto_packet_sequence_state_generation_hdr",
         ":src_trace_processor_importers_proto_proto_importer_module",
         ":src_trace_processor_importers_proto_winscope_full",
+        ":src_trace_processor_importers_saleae_saleae",
         ":src_trace_processor_importers_simpleperf_proto_simpleperf_proto",
         ":src_trace_processor_importers_syscalls_full",
         ":src_trace_processor_importers_systrace_full",
