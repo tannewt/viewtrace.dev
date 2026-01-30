@@ -143,7 +143,7 @@ export class TimelineHeader implements m.ClassComponent<TimelineHeaderAttrs> {
 
     assertExists(this.interactions).update([
       dragPanInteraction(this.trace, timelineRect, timescale),
-      wheelNavigationInteraction(this.trace, timelineRect, timescale),
+      wheelNavigationInteraction(this.trace, timelineRect),
       {
         // Allow making area selections (no tracks) by dragging on the header
         // timeline.

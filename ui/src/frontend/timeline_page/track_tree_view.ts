@@ -702,7 +702,7 @@ export class TrackTreeView implements m.ClassComponent<TrackTreeViewAttrs> {
           },
         },
       },
-      wheelNavigationInteraction(trace, timelineRect, timescale),
+      wheelNavigationInteraction(trace, timelineRect),
     ]);
   }
 

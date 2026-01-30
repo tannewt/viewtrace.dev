@@ -50,25 +50,16 @@ export function dragPanInteraction(
   };
 }
 
-export function wheelNavigationInteraction(
-  trace: TraceImpl,
-  rect: Rect2D,
-  timescale: TimeScale,
-): Zone {
+export function wheelNavigationInteraction(trace: TraceImpl, rect: Rect2D): Zone {
   return {
     id: 'mouse-wheel-navigation',
     area: rect,
     onWheel: (e) => {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        const tDelta = timescale.pxToDuration(e.deltaX);
-        trace.timeline.pan(tDelta);
-      } else {
-        const sign = e.deltaY < 0 ? -1 : 1;
-        const deltaY = sign * Math.log2(1 + Math.abs(e.deltaY));
-        const zoomPx = e.position.x - rect.left;
-        const centerPoint = zoomPx / rect.width;
-        trace.timeline.zoom(1 - deltaY * WHEEL_ZOOM_SPEED, centerPoint);
-      }
+      const sign = e.deltaY < 0 ? -1 : 1;
+      const deltaY = sign * Math.log2(1 + Math.abs(e.deltaY));
+      const zoomPx = e.position.x - rect.left;
+      const centerPoint = zoomPx / rect.width;
+      trace.timeline.zoom(1 - deltaY * WHEEL_ZOOM_SPEED, centerPoint);
     },
   };
 }

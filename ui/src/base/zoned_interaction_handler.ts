@@ -296,12 +296,15 @@ export class ZonedInteractionHandler implements Disposable {
     const mousePositionClient = new Vector2D({x: e.clientX, y: e.clientY});
     const mouse = mousePositionClient.sub(this.target.getBoundingClientRect());
     const zone = this.findZone((z) => z.onWheel && this.hitTestZone(z, mouse));
-    zone?.onWheel?.({
-      position: mouse,
-      deltaX: e.deltaX,
-      deltaY: e.deltaY,
-      ctrlKey: e.ctrlKey,
-    });
+    if (zone?.onWheel) {
+      e.preventDefault();
+      zone.onWheel({
+        position: mouse,
+        deltaX: e.deltaX,
+        deltaY: e.deltaY,
+        ctrlKey: e.ctrlKey,
+      });
+    }
   }
 
   private handleDrag(
