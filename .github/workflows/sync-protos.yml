@@ -15,9 +15,6 @@
 name: Sync generated proto files
 
 on:
-  schedule:
-    # Run every day at 2 AM UTC
-    - cron: '0 2 * * *'
   workflow_dispatch:  # Allow manual triggering
 
 permissions:
